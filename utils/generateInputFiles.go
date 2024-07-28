@@ -9,18 +9,21 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// функция для создания JSON файла
 func CreateJSONFile() {
-	jsonFile, err := os.Create("jsonInput.json")
-	if err != nil {
+	// создаем файл с именем "jsonInput.json"
+	jsonFile, err := os.Create("jsonInput.json") // в переменной jsonFile будет записан указатель на файл с именем "jsonInput.json"
+	if err != nil {                              // проверяем, если конвертация файла прошла успешно
 		fmt.Printf("json file creation fail: %s", err.Error())
 	}
 
-	defer jsonFile.Close()
+	defer jsonFile.Close() // закрываем созданный файл после работы с ним
 
 	ports := []string{"5000:5000"}
 	volumes := []string{"/usercode/:/code"}
 	links := []string{"database:backenddb"}
 
+	// инициализируем структуру web типа Web
 	web := models.Web{
 		Build:   ".",
 		Ports:   ports,
@@ -37,12 +40,14 @@ func CreateJSONFile() {
 
 	volumes = []string{"/usercode/db/init.sql:/docker-entrypoint-initdb.d/init.sql"}
 
+	// инициализируем структуру database типа Database
 	database := models.Database{
 		Image:       "mysql/mysql-server:5.7",
 		Environment: environment,
 		Volumes:     volumes,
 	}
 
+	// инициализируем структуру services типа Services
 	services := models.Services{
 		Web:      web,
 		Database: database,
